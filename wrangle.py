@@ -3,7 +3,10 @@
 import os
 import requests
 import pandas as pd
+from sklearn.model_selection import train_test_split
 from sodapy import Socrata
+
+RAND_SEED = 357
 
 ## TOP LEVEL FLOW CONTROL FUNCTIONS ##
 # see called functions for more information
@@ -22,6 +25,7 @@ def prepare_pet_dataframe(df):
     Flow control function to prepare data
     """
     df = make_date_columns(df)
+    df = make_target_column(df)
     df = null_fill_and_drop(df)
     df = convert_age_column(df)
     df = rename_intake_cols(df)
@@ -102,6 +106,34 @@ def get_pet_data(query_url = False):
         return df_o, df_i
 
 ## FUNCTIONS TO CLEAN THE COLUMNS ##
+
+def make_target_column(df):
+    """
+    Maps the various outcome_types to the target outcomes
+    """
+    new_data = []
+    #go through each row
+    for i, row in df.iterrows():
+        #map the outcome_types to the aggregated categories
+        if row['outcome_type'] == 'Adoption':
+            target_string = 'Adoption'
+        elif row['outcome_type'] == 'Transfer':
+            target_string = 'Transfer'
+        elif row['outcome_type'] in ['Returned to Owner', 'Rto-Adopt']:
+            target_string = 'Return to Owner'
+        else:
+            target_string = 'Other'
+        #add to the list of data
+        datum_calc = {
+            'animal_id':row['animal_id'],
+            'target_outcome':target_string
+        }
+        new_data.append(datum_calc)
+    #add to the dataframe
+    df_calc = pd.DataFrame(new_data)
+    df = df.merge(df_calc)
+    #return dataframe
+    return df
 
 def make_date_columns(df):
     """"
@@ -187,3 +219,19 @@ def rename_intake_cols(df):
                     'intake_condition_i': 'intake_condition',
                     'sex_upon_intake_i': 'sex_upon_intake'})
     return df
+
+## FUNCTIONS TO HELP WITH MODELING AND EXPLORATION
+
+def split_data(df):
+    '''splits the pet dataframe into train, test and validate subsets
+    
+    Args:
+        df (DataFrame) : dataframe to split
+    Return:
+        train, test, validate (DataFrame) :  dataframes split from the original dataframe
+    '''
+    #make train and test
+    train, test = train_test_split(df, train_size = 0.8, stratify=df.target_outcome, random_state=RAND_SEED)
+    #make validate
+    train, validate = train_test_split(train, train_size = 0.7, stratify=train.target_outcome, random_state=RAND_SEED)
+    return train, validate, test
