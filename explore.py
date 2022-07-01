@@ -29,7 +29,7 @@ def get_percent_outcome(df, target_col = 'target_outcome', cat_cols = ['animal_t
     #return as a dataframe
     return pd.DataFrame(outputs)
 
-def chi_square_test(df, cat_cols, target_col = 'target_outcome', alpha=0.05):
+def chi_square_mass_test(df, cat_cols, target_col = 'target_outcome', alpha=0.05):
     """
     Performs a chi square test for all the aubcategories pass to cat_cols against the
     target_col
@@ -55,4 +55,16 @@ def chi_square_test(df, cat_cols, target_col = 'target_outcome', alpha=0.05):
                 }
                 outputs.append(output)
     #return the dataframe
+    return pd.DataFrame(outputs)
+
+def chi_square_test(var_one, var_two, alpha = 0.05):
+    outputs = []
+    observed = pd.crosstab(var_one, var_two)
+    chi2, p, degf, expected = stats.chi2_contingency(observed)
+    output = {
+        'χ^2' : chi2,
+        'p' : p,
+        'reject_null': p < alpha
+    }
+    outputs.append(output)
     return pd.DataFrame(outputs)
