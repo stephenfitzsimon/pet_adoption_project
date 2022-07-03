@@ -29,6 +29,7 @@ def prepare_pet_dataframe(df):
     df = null_fill_and_drop(df)
     df = convert_age_column(df)
     df = rename_intake_cols(df)
+    df = replace_intake_conditions(df)
     return df
 
 def make_pet_dataframe():
@@ -39,7 +40,27 @@ def make_pet_dataframe():
     df = prepare_pet_dataframe(df)
     return df
 
+def make_model_sets(df):
+    """
+    Flow control function to make X and y sets for modeling
+    """
+    df = make_feature_column_and_filter(df)
+    df = drop_columns_for_model(df)
+    X, y = make_X_and_y(df)
+    X = make_dummies(X)
+    return X, y
+
 ## FUNCTIONS TO JOIN TABLES ##
+
+def replace_intake_conditions(df):
+    df['intake_condition'] = df['intake_condition'].replace({
+        'Med Attn':'Other',
+        'Space':'Other', 
+        'Med Urgent': 'Other', 
+        'Agonal': 'Other', 
+        'Panleuk':'Other'
+        })
+    return df
 
 def join_tables(df_o, df_i):
     """
@@ -231,7 +252,91 @@ def split_data(df):
         train, test, validate (DataFrame) :  dataframes split from the original dataframe
     '''
     #make train and test
-    train, test = train_test_split(df, train_size = 0.8, stratify=df.target_outcome, random_state=RAND_SEED)
+    train, test = train_test_split(df, train_size = 0.8, stratify=df[['target_outcome']], random_state=RAND_SEED)
     #make validate
-    train, validate = train_test_split(train, train_size = 0.7, stratify=train.target_outcome, random_state=RAND_SEED)
+    train, validate = train_test_split(train, train_size = 0.7, stratify=train[['target_outcome']], random_state=RAND_SEED)
     return train, validate, test
+
+def make_feature_column_and_filter(df):
+    """
+    Filters to only cats and dogs, and makes length_of_stay column
+    """
+    df = df[df['animal_type'].isin(['Cat', 'Dog'])]
+    df = df[~df['intake_type'].isin(['Wildlife'])]
+    df['length_of_stay'] = (df.outcome_date-df.intake_date).dt.days
+    df['intake_date'] = df['intake_date'].dt.month
+    df['breed'] = df['breed'].str.replace('/', ' ')
+    df['color'] = df['color'].str.replace('/', ' ')
+    color_column_list = [
+        'Black',
+        'White',
+        'Brown',
+        'Tabby',
+        'Orange',
+        'Tan',
+        'Blue',
+        'Tricolor',
+        'Tortie',
+        'Calico',
+        'Red',
+        'Torbie',
+        'Brindle',
+        'Cream',
+        'Yellow',
+        'Buff',
+        'Sable',
+        'Grey',
+    ]
+    for color_name in color_column_list:
+        df[f'is_{color_name}'] = df['color'].str.contains(color_name)
+    df['is_other_color'] = ~df['color'].isin(color_column_list)
+    breed_column_list = [
+        'Shorthair',
+        'Medium Hair',
+        'Longhair',
+        'Mix',
+        'Pit Bull',
+        'Labrador Retriever',
+        'Chihuahua',
+        'German Shepherd',
+        'Australian Cattle Dog',
+        'Dachshund',
+        'Border Collie',
+        'Boxer',
+        'Miniature Poodle',
+        'Australian Shepherd',
+        'Yorkshire Terrier',
+        'Miniature Schnauzer',
+        'Great Pyrenees',
+        'Siberian Husky',
+        'Rat Terrier',
+        'Beagle',
+        'Jack Russell Terrier',
+        'Staffordshire',
+        'Pointer'
+        'Siamese'
+    ]
+    for breed_name in breed_column_list:
+        df[f'is_{breed_name}'] = df['breed'].str.contains(breed_name)
+    df['is_other_breed'] = ~df['breed'].isin(breed_column_list)
+    return df
+
+def make_X_and_y(df):
+    '''Makes a X and y sets'''
+    #drop relevant columns
+    X_df = df.drop(columns = ['target_outcome'])
+    #make y_Train
+    y_df = df[['animal_id', 'target_outcome']]
+    return X_df, y_df
+
+def drop_columns_for_model(df):
+    return df.drop(columns = ['outcome_date', 'breed', 'color', 'name', 'sex_upon_outcome', 'sex_upon_intake', 'outcome_type', 'outcome_subtype', 'found_location'])
+
+def make_dummies(df):
+    '''creates all catagorical columns into encoded columns'''
+    #get all catagorical columns
+    cat_cols = list(df.select_dtypes(include = ['object', 'bool']).iloc[:,1:].columns)
+    # make dummy columns
+    dummy_df = pd.get_dummies(df[cat_cols], dummy_na = False, drop_first = True)
+    df = pd.concat([df, dummy_df], axis = 1)
+    return df.drop(columns = list(df.select_dtypes(include = ['object']).columns))
