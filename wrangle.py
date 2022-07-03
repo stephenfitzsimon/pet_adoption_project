@@ -44,7 +44,7 @@ def make_model_sets(df):
     """
     Flow control function to make X and y sets for modeling
     """
-    df = make_feature_column_and_filter(df)
+    df = make_feature_columns_and_filter(df)
     df = drop_columns_for_model(df)
     X, y = make_X_and_y(df)
     X = make_dummies(X)
@@ -257,7 +257,7 @@ def split_data(df):
     train, validate = train_test_split(train, train_size = 0.7, stratify=train[['target_outcome']], random_state=RAND_SEED)
     return train, validate, test
 
-def make_feature_column_and_filter(df):
+def make_feature_columns_and_filter(df):
     """
     Filters to only cats and dogs, and makes length_of_stay column
     """
