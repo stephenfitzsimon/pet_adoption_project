@@ -23,9 +23,19 @@
 - `wrangle_notes.ipynb` : Contains notes and development for the `wrangle.py` functions
 
 ### Data Source <a name='data_source'></a>
-The City of Austin provides an <a href='https://data.austintexas.gov/'>open data websit</a> where the data for this project can be found.
+The City of Austin provides an <a href='https://data.austintexas.gov/'>open data website</a> where the data for this project can be found.
 - <a href= 'https://data.austintexas.gov/Health-and-Community-Services/Austin-Animal-Center-Outcomes/9t4d-g238'>Outcome data can be found here</a>
 - <a href= 'https://data.austintexas.gov/Health-and-Community-Services/Austin-Animal-Center-Intakes/wter-evkm'>Intake data can be found here</a>
+    
+### Intro to the Target Variable
+    
+The model attempts to predict the outcomes for animals the first time they arrive at the shelter.  In the interest of simplicity, the various categories in the `outcome_type` column are aggregated into four categories. The model attempts to predict one of for outcomes as aggregated from the `outcome_type` column of the data:
+1. Adoption
+2. Transfer
+3. Return to Owner (include Rto-Adopt category)
+4. Other (includes the following: euthanised, died, disposal, missing, relocate, lost)
+
+Many of the outcomes in the Other category were due to non-pet status (for example `A860153` is a bat and `A860288` is a grackle, both of which at intake were injured).  Or of the euthanised/died animals, most were considered suffering/sick/injured.
 
 <a href='contents'>Back to Contents</a>
 
@@ -77,3 +87,23 @@ The average length of stay of adopted animals is 32 days; however, dogs are adop
 - Calculated column representing length of stay is used in modeling, but is cast to `int`
 - `intake_date` is transformed into an `int` representing the numeric representation of the month
 - Baseline accuracy is $0.46$
+
+## Data Dictionary
+
+`animal_id` : unique identifier per animal   
+`name` : animal name      
+`outcome_type` : animal outcome as defined by Austin Animal Center       
+`animal_type` : animal species      
+`sex_upon_outcome` : sex as fixed/unfixed male/female
+` breed ` : breed of animal   
+`color`: animal color    
+`outcome_subtype` : outcome subtype
+`found_location` : address of animal pickup
+`intake_type` : intake type (stray, owner surrender, etc)
+`intake_condition` : animal condition at intake
+`sex_upon_intake` : sex at intake, indicated fixed/unfixed
+`outcome_date` : date of outcome
+`intake_date`  : intake date
+`target_outcome` : feature engineer of four target outcomes 
+`age_at_outcome` : age at outcome in days
+`age_at_intake`  : age at intake in days
