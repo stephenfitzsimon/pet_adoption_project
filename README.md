@@ -1,5 +1,11 @@
 # Austin Shelter Pet Outcomes
 
+## Key Takeaways
+
+- Strays in normal condition at intake are most likely to be adopted
+- Average stay is 26 days for dogs and 40 for cats.
+- A decision tree model is $0.73$ accurate at predicting animal outcomes
+
 ## Contents <a name='contents'></a>
 
 *Note: the following hyperlinks will only work on local copies of this notebook; they will not function on GitHub!*
@@ -8,6 +14,9 @@
     1. <a href='repo_structure'> What Files Are In This Repo </a>
     1. <a href='data_source'>Data Source</a>
 2. <a href='wrangle'>Wrangle Data</a>
+3. <a href='#exploring'>Exploring The Data</a>
+4. <a href='#model'>Modeling</a>
+5. <a href='#data_dictionary'>Data Dictionary</a>
 
 ## Introduction <a name='introduction'></a>
 
@@ -20,7 +29,8 @@
 
 ### What Files Are In This Repo <a name='repo_structure'></a>
 - `wrangle.py` : contains all the functions to retrieve the data and prepare it for exploration
-- `wrangle_notes.ipynb` : Contains notes and development for the `wrangle.py` functions
+- `explore.py` : contains all function to perform calculations and statistical test used in the exploratory analysis
+- `modelling.py` : contains all function to create models, mass model metrics, and making the ensemble model
 
 ### Data Source <a name='data_source'></a>
 The City of Austin provides an <a href='https://data.austintexas.gov/'>open data website</a> where the data for this project can be found.
@@ -83,12 +93,30 @@ The average length of stay of adopted animals is 32 days; however, dogs are adop
 
 ### Key Takeaways
 - Only modeling for dogs and cats, as these represent the majority of the data
-- Classification models are used
+- The following classification models are used: DecisionTree, RandomForest, ExtraTrees, LogisticRegression, K-Nearest Neighbors
 - Calculated column representing length of stay is used in modeling, but is cast to `int`
 - `intake_date` is transformed into an `int` representing the numeric representation of the month
-- Baseline accuracy is $0.46$
+- Baseline accuracy is $0.43$
+- A decision tree model with a max depth of six improves on baseline with an accuracy of $0.73$ on unseen data
 
-## Data Dictionary
+<a href='#contents'>Back to Contents</a>
+
+## Conclusion <a name='conclusion'></a>
+
+The model and analysis for this project explore the characteristics of animals that are likely to get adopted.  With a model accuracy of $0.73$ reasources can be allocated to animals that need more help getting adopted.  For example, animals with a lower probability might simply need to be socialized, or given to fosters who will work with shelter staff to find potential owners. 
+
+This model could be deployed to the shelter staff to via integration with existing database systems, or via a dashboard for shelter managers.  It could also be extended via other models that could predict the length of stay of a particular animal.  A survey of already adopted animals and their owners might also provide insight into what type of owners would be useful to determine best animal-owner fits; particularly if there is some metric for animal personality.  Transfers to partner shelters/organizations are common; there may be some animals that are more likely to be adopted by partners--therefore data on adoption outcomes from partners would be beneficial to determine which animals would most benefit from being transfered to partner organizations.
+
+### Ideas for the Future
+
+- Build a model to predict shelter length of stay.
+- Build an example dashboard to show where current reasources might best be placed
+- Try out more model types, with different features in order to improve model accuracy
+    - Try a piecewise model for each animal type
+    - Look more into breed and color as predictors of adoption
+
+
+## Data Dictionary <a name='data_dictionary'></a>
 
 `animal_id` : unique identifier per animal   
 `name` : animal name      

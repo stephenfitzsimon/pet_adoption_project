@@ -58,6 +58,9 @@ def chi_square_mass_test(df, cat_cols, target_col = 'target_outcome', alpha=0.05
     return pd.DataFrame(outputs)
 
 def chi_square_test(var_one, var_two, alpha = 0.05):
+    """"
+    Performs a chi squared test on two variables passed
+    """
     outputs = []
     observed = pd.crosstab(var_one, var_two)
     chi2, p, degf, expected = stats.chi2_contingency(observed)
@@ -88,6 +91,9 @@ def t_test_lesser(df, column_cat, subcat_val, column_cont, alpha = 0.05):
     return pd.DataFrame([output])
 
 def get_top_ten_compare(df, outcome, animal, cat, normalized = True):
+    """
+    Calculates the percentage of animals among outcomes and animal type and category
+    """
     top_ten_1 = df[(df.target_outcome==outcome)&(df.animal_type==animal)][cat].value_counts(normalize= normalized)
     top_ten_2 = df[(df.animal_type==animal)][cat].value_counts(normalize = normalized)
     top_ten_1 = top_ten_1.rename(f"Most common {cat} at {outcome}")
@@ -97,12 +103,18 @@ def get_top_ten_compare(df, outcome, animal, cat, normalized = True):
     return compare_df
 
 def mann_whitney(sample_1, sample_2, alpha=0.05):
+    """"
+    Perfroms a mann whitney U test
+    """
     outputs = []
+    #get statistics
     stat, p = stats.mannwhitneyu(sample_1, sample_2, alternative='less')
+    #save stats
     output = {
         'U-Stat':stat,
         'p-value':p,
         'reject_null': p/2 < alpha
     }
     outputs.append(output)
+    #return to call
     return pd.DataFrame(outputs)
