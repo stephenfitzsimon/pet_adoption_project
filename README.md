@@ -118,20 +118,20 @@ This model could be deployed to the shelter staff to via integration with existi
 
 ## Data Dictionary <a name='data_dictionary'></a>
 
-`animal_id` : unique identifier per animal   
-`name` : animal name      
-`outcome_type` : animal outcome as defined by Austin Animal Center       
-`animal_type` : animal species      
-`sex_upon_outcome` : sex as fixed/unfixed male/female
-` breed ` : breed of animal   
-`color`: animal color    
-`outcome_subtype` : outcome subtype
-`found_location` : address of animal pickup
-`intake_type` : intake type (stray, owner surrender, etc)
-`intake_condition` : animal condition at intake
-`sex_upon_intake` : sex at intake, indicated fixed/unfixed
-`outcome_date` : date of outcome
-`intake_date`  : intake date
-`target_outcome` : feature engineer of four target outcomes 
-`age_at_outcome` : age at outcome in days
-`age_at_intake`  : age at intake in days
+- `animal_id` : unique identifier per animal   
+- `name` : animal name      
+- `outcome_type` : animal outcome as defined by Austin Animal Center       
+- `animal_type` : animal species      
+- `sex_upon_outcome` : sex as fixed/unfixed male/female
+- ` breed ` : breed of animal   
+- `color`: animal color    
+- `outcome_subtype` : outcome subtype
+- `found_location` : address of animal pickup
+- `intake_type` : intake type (stray, owner surrender, etc)
+- `intake_condition` : animal condition at intake
+- `sex_upon_intake` : sex at intake, indicated fixed/unfixed
+- `outcome_date` : date of outcome
+- `intake_date`  : intake date
+- `target_outcome` : feature engineer of four target outcomes 
+- `age_at_outcome` : age at outcome in days
+- `age_at_intake`  : age at intake in days
