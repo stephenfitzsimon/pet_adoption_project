@@ -6,6 +6,10 @@
 - Average stay is 26 days for dogs and 40 for cats.
 - A decision tree model is $0.73$ accurate at predicting animal outcomes
 
+## Full Report
+
+The full report can be found <a href='https://github.com/stephenfitzsimon/pet_adoption_project/blob/main/final_adoption_report.ipynb'>here</a>
+
 ## Contents <a name='contents'></a>
 
 *Note: the following hyperlinks will only work on local copies of this notebook; they will not function on GitHub!*
@@ -135,5 +139,11 @@ This model could be deployed to the shelter staff to via integration with existi
 - `target_outcome` : feature engineer of four target outcomes 
 - `age_at_outcome` : age at outcome in days
 - `age_at_intake`  : age at intake in days
+
+<a href='#contents'>Back to Contents</a>
+
+## Reproducing this project
+
+Download `final_adoption_report.ipynb`, `modelling.py`, `wrangle.py` and `prepare.py`.  Then run `final_adoption_report.ipynb` in Jupyter Notebooks.
 
 <a href='#contents'>Back to Contents</a>
